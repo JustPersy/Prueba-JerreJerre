@@ -25,23 +25,28 @@ $lineas = file($destino, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 $dataLines = [];
 foreach ($lineas as $num => $line) {
     $cols = str_getcsv($line, ',');
-    if (count($cols) < 4) {
+    if (count($cols) < 5) {
         header("Location: index.php?error=" . urlencode("El archivo no tiene el formato correcto. Error en línea " . ($num + 1)));
         exit;
     }
-    list($email, $nombre, $apellido, $codigo) = $cols;
+    list($email, $nombre, $apellido, $codigoEstado, $codigoRevisor) = $cols;
     $email   = trim($email);
     $nombre  = trim($nombre);
     $apellido= trim($apellido);
-    $codigo  = trim($codigo);
+    $codigoEstado  = trim($codigoEstado);
+    $codigoRevisor  = trim($codigoRevisor);
 
     // Validaciones de email y código
     if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         header("Location: index.php?error=" . urlencode("Email inválido o faltante en la línea " . ($num + 1) . " del archivo."));
         exit;
     }
-    if (!in_array($codigo, ['1','2','3'], true)) {
+    if (!in_array($codigoEstado, ['1','2','3'], true)) {
         header("Location: index.php?error=" . urlencode("Código de estado inválido en la línea " . ($num + 1) . " del archivo."));
+        exit;
+    }
+    if (!is_numeric($codigoRevisor) || intval($codigoRevisor) < 0) {
+        header("Location: index.php?error=" . urlencode("Código de revisor inválido en la línea " . ($num + 1) . " del archivo."));
         exit;
     }
 
@@ -49,7 +54,8 @@ foreach ($lineas as $num => $line) {
         'email'   => $email,
         'nombre'  => $nombre,
         'apellido'=> $apellido,
-        'estado'  => intval($codigo)
+        'estado'  => intval($codigoEstado),
+        'revisor_id'  => intval($codigoRevisor),
     ];
 }
 
@@ -58,14 +64,15 @@ $mysqli = connectDB();
 // Inserción de datos en la base de datos
 try {
     $mysqli->begin_transaction();
-    $stmt = $mysqli->prepare("INSERT INTO usuarios (email, nombre, apellido, estado) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("sssi", $email, $nombre, $apellido, $estado);
+    $stmt = $mysqli->prepare("INSERT INTO usuarios (email, nombre, apellido, estado, revisor_id) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssii", $email, $nombre, $apellido, $estado, $revisorId);
 
     foreach ($dataLines as $row) {
         $email    = $row['email'];
         $nombre   = $row['nombre'];
         $apellido = $row['apellido'];
         $estado   = $row['estado'];
+        $revisorId  = $row['revisor_id'] + 9;
         if (!$stmt->execute()) {
             throw new Exception("Error al insertar el usuario con email: " . $email);
         }
@@ -75,7 +82,7 @@ try {
     $stmt->close();
     $mysqli->close();
 
-    // Mensaje de extio
+    // Mensaje de exito
     header("Location: index.php?success=1");
     exit;
 } catch (Exception $e) {

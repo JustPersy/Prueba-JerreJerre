@@ -1,7 +1,8 @@
 <?php
-$servername = "localhost";
-$username   = "root";
-$password   = "";
+// $servername = "localhost";
+$servername = "127.0.0.1";
+$username   = "dev";
+$password   = "1234";
 $dbname     = "prueba_gema";
 
 function connectDB() {

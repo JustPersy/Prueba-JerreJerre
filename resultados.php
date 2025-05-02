@@ -5,9 +5,9 @@ require_once 'config.php';
 $mysqli = connectDB();
 
 // Consultas por estado
-$activos    = $mysqli->query("SELECT email, nombre, apellido FROM usuarios WHERE estado = 1");
-$inactivos  = $mysqli->query("SELECT email, nombre, apellido FROM usuarios WHERE estado = 2");
-$espera     = $mysqli->query("SELECT email, nombre, apellido FROM usuarios WHERE estado = 3");
+$activos    = $mysqli->query("SELECT u.email, u.nombre, u.apellido AS u_apellido, r.apellido AS r_apellido FROM usuarios AS u JOIN revisores AS r ON u.revisor_id = r.id WHERE u.estado = 1;");
+$inactivos  = $mysqli->query("SELECT u.email, u.nombre, u.apellido AS u_apellido, r.apellido AS r_apellido FROM usuarios AS u JOIN revisores AS r ON u.revisor_id = r.id WHERE u.estado = 2;");
+$espera     = $mysqli->query("SELECT u.email, u.nombre, u.apellido AS u_apellido, r.apellido AS r_apellido FROM usuarios AS u JOIN revisores AS r ON u.revisor_id = r.id WHERE u.estado = 3;");
 
 $mysqli->close();
 ?>
@@ -31,13 +31,14 @@ $mysqli->close();
         <section>
             <h2>Usuarios Activos</h2>
             <table>
-                <thead><tr><th>Email</th><th>Nombre</th><th>Apellido</th></tr></thead>
+                <thead><tr><th>Email</th><th>Nombre</th><th>Apellido</th><th>Revisor</th></tr></thead>
                 <tbody>
                     <?php while ($row = $activos->fetch_assoc()): ?>
                     <tr>
                         <td><?php echo htmlspecialchars($row['email']); ?></td>
                         <td><?php echo htmlspecialchars($row['nombre']); ?></td>
-                        <td><?php echo htmlspecialchars($row['apellido']); ?></td>
+                        <td><?php echo htmlspecialchars($row['u_apellido']); ?></td>
+                        <td><?php echo htmlspecialchars($row['r_apellido']); ?></td>
                     </tr>
                     <?php endwhile; ?>
                 </tbody>
@@ -47,13 +48,14 @@ $mysqli->close();
         <section>
             <h2>Usuarios Inactivos</h2>
             <table>
-                <thead><tr><th>Email</th><th>Nombre</th><th>Apellido</th></tr></thead>
+                <thead><tr><th>Email</th><th>Nombre</th><th>Apellido</th><th>Revisor</th></tr></thead>
                 <tbody>
                     <?php while ($row = $inactivos->fetch_assoc()): ?>
                     <tr>
                         <td><?php echo htmlspecialchars($row['email']); ?></td>
                         <td><?php echo htmlspecialchars($row['nombre']); ?></td>
-                        <td><?php echo htmlspecialchars($row['apellido']); ?></td>
+                        <td><?php echo htmlspecialchars($row['u_apellido']); ?></td>
+                        <td><?php echo htmlspecialchars($row['r_apellido']); ?></td>
                     </tr>
                     <?php endwhile; ?>
                 </tbody>
@@ -63,13 +65,14 @@ $mysqli->close();
         <section>
             <h2>Usuarios en Espera</h2>
             <table>
-                <thead><tr><th>Email</th><th>Nombre</th><th>Apellido</th></tr></thead>
+                <thead><tr><th>Email</th><th>Nombre</th><th>Apellido</th><th>Revisor</th></tr></thead>
                 <tbody>
                     <?php while ($row = $espera->fetch_assoc()): ?>
                     <tr>
                         <td><?php echo htmlspecialchars($row['email']); ?></td>
                         <td><?php echo htmlspecialchars($row['nombre']); ?></td>
-                        <td><?php echo htmlspecialchars($row['apellido']); ?></td>
+                        <td><?php echo htmlspecialchars($row['u_apellido']); ?></td>
+                        <td><?php echo htmlspecialchars($row['r_apellido']); ?></td>
                     </tr>
                     <?php endwhile; ?>
                 </tbody>

@@ -1,4 +1,4 @@
-# Sistema de Gestión de Usuarios GEMA.SAS
+# Formulario de carga de Usuarios para GEMA.SAS / Manual de instalación
 
 ## Descripción
 
@@ -94,7 +94,7 @@ otro@ejemplo.com,Ana,López,2
    - Usuarios inactivos (estado 2)
    - Usuarios en espera (estado 3)
 
-## Solución de problemas
+## Solución de posibles problemas
 
 - **Error de conexión a la base de datos:** Verifica las credenciales en `config.php`
 - **Problemas con la carga de archivos:** Comprueba los permisos de escritura del directorio
@@ -107,7 +107,6 @@ otro@ejemplo.com,Ana,López,2
 - MySQL
 - HTML5
 - CSS3
-- JavaScript
 
 ---
 
